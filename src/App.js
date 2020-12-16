@@ -1,9 +1,30 @@
 import logo from './logo.svg';
 import './App.css';
 
+//const title = 'React';
+const welcome = {
+  greeting: 'Hello',
+  title: 'React',
+};
+
+function getTitle(title){
+  return title;
+}
+
 function App() {
   return (
-    <div className="App">
+
+    <div>
+      <h1>
+        {welcome.greeting} {getTitle('React')} 
+        {/* everything in curly braces in JSX can be used for JavaScript expressions (e.g. function execution) */}
+      </h1>
+
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text"/>
+    </div>
+
+    /*<div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -18,7 +39,7 @@ function App() {
           Learn React
         </a>
       </header>
-    </div>
+    </div>*/
   );
 }
 
