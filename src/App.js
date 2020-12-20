@@ -1,4 +1,5 @@
-import logo from './logo.svg';
+import React from 'react';
+//import logo from './logo.svg';
 import './App.css';
 
 
@@ -23,8 +24,16 @@ const App = () => {
     },
   ];
 
+  // React state is used to make applications interactive.
+  const [searchTerm, setSearchTerm] = React.useState('');
+  /*
+  React’s useState hook takes an initial state as an argument. We’ll use an empty string, and the
+  function will return an array with two values. The first value (searchTerm) represents the current
+  state; the second value is a function to update this state (setSearchTerm). 
+  */
+
   const handleChange = event => {
-    console.log(event.target.value);
+    setSearchTerm(event.target.value);
   };
   
   return (
@@ -34,6 +43,14 @@ const App = () => {
       <label htmlFor="search">Search: </label>
       <input id="search" type="text" onChange={handleChange}/>
 
+      <p>
+        Searching for <strong>{searchTerm}</strong>.
+      </p>
+      {/* When the user types into the input field, the input field’s change event is captured by the handler
+      with its current internal value. The handler’s logic uses the state updater function to set the
+      new state. After the new state is set in a component, the component renders again, meaning the
+      component function runs again. The new state becomes the current state and can be displayed in
+      the component’s JSX */}
       <hr/>
 
       {/*Rendering the list here*/}
