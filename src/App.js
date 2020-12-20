@@ -1,11 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
 
-//const title = 'React';
-const welcome = {
-  greeting: 'Hello',
-  title: 'React',
-};
 
 const list = [
   {
@@ -27,32 +22,33 @@ const list = [
 ]
 
 
-function getTitle(title){
-  return title;
-}
+const App = () => {
 
-const App = () => (
+  const handleChange = event => {
+    console.log(event.target.value);
+  };
+  
+  return (
+    <div>
+      <h1>My Hacker Stories</h1>
 
-  <div>
-    <h1>My Hacker Stories</h1>
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text" onChange={handleChange}/>
 
-    <label htmlFor="search">Search: </label>
-    <input id="search" type="text"/>
+      <hr/>
 
-    <hr/>
-
-    {/*Rendering the list here*/}
-    {/* Instance of List component used in the App component */}
-    <List/>
-  </div>
-);
+      {/*Rendering the list here*/}
+      {/* Instance of List component used in the App component */}
+      <List/>
+    </div>
+  );
+};
 
 
 
 const List = () =>
   list.map(item => (
     
-    <div>
       <div key={item.objectID}>
         <span>
           <a href={item.url}> {item.title} </a>
@@ -61,7 +57,6 @@ const List = () =>
         <span> {item.num_comments} </span>
         <span> {item.points} </span>
       </div>
-    </div>
   ));
 
 
