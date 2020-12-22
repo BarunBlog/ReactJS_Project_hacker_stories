@@ -24,23 +24,30 @@ const App = () => {
     },
   ];
 
-  // A
+  const [searchTerm, setSearchTerm] = React.useState('React');
+
+  //console.log(searchTerm);
+  
   const handleSearch = event => {
-    // C
-    console.log(event.target.value);
+    setSearchTerm(event.target.value);
   };
+
+  const searchedStories = stories.filter( story =>
+    story.title.toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
   
   return (
     <div>
       <h1>My Hacker Stories</h1>
 
-      <Search onSearch={handleSearch} />
+      <Search search={searchTerm} onSearch={handleSearch} />
 
       <hr/>
      
       {/*Rendering the list here*/}
       {/* Instance of List component used in the App component */}
-      <List list={stories} /> {/* React props to pass the array to the List component: */}
+      <List list={searchedStories} /> {/* React props to pass the array to the List component: */}
     </div>
   );
 };
@@ -48,40 +55,26 @@ const App = () => {
 
 
 
-const Search = props => {
-    // React state is used to make applications interactive.
-    const [searchTerm, setSearchTerm] = React.useState('');
-    /*
-    React’s useState hook takes an initial state as an argument. We’ll use an empty string, and the
-    function will return an array with two values. The first value (searchTerm) represents the current
-    state; the second value is a function to update this state (setSearchTerm). 
-    */
-  
-    const handleChange = event => {
-      setSearchTerm(event.target.value);
+const Search = props => (
 
-      // B
-      props.onSearch(event);
-      // Sends event data to the handleSearch method of parent component
-    };
-
-    return (
       <div>
         <label htmlFor="search">Search: </label>
-        <input id="search" type="text" onChange={handleChange}/>
+        <input 
+          id="search" 
+          type="text" 
+          value={props.search}
+          onChange={props.onSearch}
+        />
 
-        <p>
-          Searching for <strong>{searchTerm}</strong>.
-        </p>
         {/* When the user types into the input field, the input field’s change event is captured by the handler
         with its current internal value. The handler’s logic uses the state updater function to set the
         new state. After the new state is set in a component, the component renders again, meaning the
         component function runs again. The new state becomes the current state and can be displayed in
         the component’s JSX */}
       </div>
-    );
+);
 
-};
+
 
 
 
