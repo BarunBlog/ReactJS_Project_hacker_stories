@@ -55,7 +55,7 @@ const App = () => {
 
 
 
-const Search = props => (
+const Search = ({search, onSearch}) => (
 
       <div>
         <label htmlFor="search">Search: </label>
@@ -78,20 +78,47 @@ const Search = props => (
 
 
 
-
-
-const List = props =>
-  props.list.map(item => (
+// Variation 1:
+/*
+const List = ({ list }) =>
+  list.map(item => <Item key={item.objectID} item={item} />);
+ 
+const Item = ({ 
+  item: {
+    title,
+    url,
+    author,
+    num_comments,
+    points,
+  },
+ }) => (
     
-      <div key={item.objectID}>
-        <span>
-          <a href={item.url}> {item.title} </a>
-        </span>
-        <span> {item.author} </span>
-        <span> {item.num_comments} </span>
-        <span> {item.points} </span>
-      </div>
-  ));
+  <div>
+    <span>
+      <a href={url}> {title} </a>
+    </span>
+    <span> {author} </span>
+    <span> {num_comments} </span>
+    <span> {points} </span>
+  </div>
+);
+*/
+
+// Variation 2: Spread and Rest Operators
+const List = ({ list }) =>
+  list.map(({object, ...item}) => <Item key={item.objectID} {...item}/>);
+ 
+const Item = ({ title, url, author, num_comments, points }) => (
+    
+  <div>
+    <span>
+      <a href={url}> {title} </a>
+    </span>
+    <span> {author} </span>
+    <span> {num_comments} </span>
+    <span> {points} </span>
+  </div>
+);
 
 
 export default App;
