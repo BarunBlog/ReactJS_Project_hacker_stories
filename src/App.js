@@ -62,8 +62,8 @@ const Search = ({search, onSearch}) => (
         <input 
           id="search" 
           type="text" 
-          value={props.search}
-          onChange={props.onSearch}
+          value={search}
+          onChange={onSearch}
         />
 
         {/* When the user types into the input field, the input field’s change event is captured by the handler
