@@ -24,9 +24,19 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = React.useState('React');
+  const [searchTerm, setSearchTerm] = React.useState(
+    localStorage.getItem('search') || 'React'
+  );
 
   //console.log(searchTerm);
+
+  /*
+  the function useEffect(Hook) is called every time the searchTerm changes; and it’s also called initially 
+  when the component renders for the first time
+  */
+  React.useEffect(() => {
+    localStorage.setItem('search', searchTerm);
+  }, [searchTerm]);
   
   const handleSearch = event => {
     setSearchTerm(event.target.value);
