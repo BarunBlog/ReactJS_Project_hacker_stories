@@ -3,6 +3,22 @@ import React from 'react';
 import './App.css';
 
 
+const useSemiPersistentState = (key, initialState) => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(key) || initialState
+  );
+
+  /*
+  the function useEffect(Hook) is called every time the value changes; and it’s also called initially 
+  when the component renders for the first time
+  */
+  React.useEffect(() => {
+    localStorage.setItem(key, value);
+  }, [value, key]);
+
+  return [value, setValue];
+};
+
 const App = () => {
 
   const stories = [
@@ -24,20 +40,9 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = React.useState(
-    localStorage.getItem('search') || 'React'
-  );
+  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
 
-  //console.log(searchTerm);
 
-  /*
-  the function useEffect(Hook) is called every time the searchTerm changes; and it’s also called initially 
-  when the component renders for the first time
-  */
-  React.useEffect(() => {
-    localStorage.setItem('search', searchTerm);
-  }, [searchTerm]);
-  
   const handleSearch = event => {
     setSearchTerm(event.target.value);
   };
