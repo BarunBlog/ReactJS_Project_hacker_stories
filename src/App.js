@@ -58,10 +58,11 @@ const App = () => {
 
       <InputWithLabel
         id="search"
-        label="Search"
         value={searchTerm}
         onInputChange={handleSearch}
-      />
+      >
+        <strong>Search:</strong>
+      </InputWithLabel>
 
 
       <hr/>
@@ -74,16 +75,17 @@ const App = () => {
 };
 
 
-
+{/* Everything that’s passed between a component’s elements can be accessed
+    as children in the component and be rendered somewhere.*/}
 const InputWithLabel = ({
   id,
-  label,
   value, 
   type = 'text',
   onInputChange,
+  children,
  }) => (
   <>
-    <label htmlFor={id}>{label}</label>
+    <label htmlFor={id}>{children}</label>
     &nbsp; {/* non bracking space*/}
     <input
       id={id}
