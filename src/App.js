@@ -56,7 +56,13 @@ const App = () => {
     <div>
       <h1>My Hacker Stories</h1>
 
-      <Search search={searchTerm} onSearch={handleSearch} />
+      <InputWithLabel
+        id="search"
+        label="Search"
+        value={searchTerm}
+        onInputChange={handleSearch}
+      />
+
 
       <hr/>
      
@@ -69,23 +75,22 @@ const App = () => {
 
 
 
-
-const Search = ({search, onSearch}) => (
-
+const InputWithLabel = ({
+  id,
+  label,
+  value, 
+  type = 'text',
+  onInputChange,
+ }) => (
   <>
-    <label htmlFor="search">Search: </label>
-    <input 
-      id="search" 
-      type="text" 
-      value={search}
-      onChange={onSearch}
+    <label htmlFor={id}>{label}</label>
+    &nbsp; {/* non bracking space*/}
+    <input
+      id={id}
+      type={type}
+      value={value}
+      onChange={onInputChange}
     />
-
-    {/* When the user types into the input field, the input field’s change event is captured by the handler
-    with its current internal value. The handler’s logic uses the state updater function to set the
-    new state. After the new state is set in a component, the component renders again, meaning the
-    component function runs again. The new state becomes the current state and can be displayed in
-    the component’s JSX */}
   </>
 );
 
