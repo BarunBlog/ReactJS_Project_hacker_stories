@@ -59,6 +59,7 @@ const App = () => {
       <InputWithLabel
         id="search"
         value={searchTerm}
+        isFocused
         onInputChange={handleSearch}
       >
         <strong>Search:</strong>
@@ -75,26 +76,42 @@ const App = () => {
 };
 
 
-{/* Everything that’s passed between a component’s elements can be accessed
-    as children in the component and be rendered somewhere.*/}
+/* Everything that’s passed between a component’s elements can be accessed
+    as children in the component and be rendered somewhere.*/
 const InputWithLabel = ({
   id,
   value, 
   type = 'text',
   onInputChange,
+  isFocused,
   children,
- }) => (
-  <>
-    <label htmlFor={id}>{children}</label>
-    &nbsp; {/* non bracking space*/}
-    <input
-      id={id}
-      type={type}
-      value={value}
-      onChange={onInputChange}
-    />
-  </>
-);
+ }) => {
+
+  /* ref with React’s useRef hook.*/
+  const inputRef = React.useRef();
+
+  React.useEffect(() => {
+    if(isFocused && inputRef.current){
+
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
+
+  
+  return(
+    <>
+      <label htmlFor={id}>{children}</label>
+      &nbsp; {/* non bracking space*/}
+      <input
+        ref={inputRef}
+        id={id}
+        type={type}
+        value={value}
+        onChange={onInputChange}
+      />
+    </>
+  );
+}
 
 
 
