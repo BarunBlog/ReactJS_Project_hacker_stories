@@ -77,21 +77,22 @@ const App = () => {
   wrap it into a useCallback hook (B); and then invoke it in the useEffect hook (C)
   */
   // (A)
-  const handleFetchStories = React.useCallback(() => {
-
+  const handleFetchStories = React.useCallback(async () => {
+    // To use async/await, our function requires the async keyword.
     dispatchStories({ type: 'STORIES_FETCH_INIT'});
+    try {
+      const result = await axios.get(url);
+      //Actions after the await keyword are not executed until promise resolves, 
+      //meaning the code will wait
 
-    axios
-      .get(url)
-      .then(result => {
       dispatchStories({
         type: 'STORIES_FETCH_SUCCESS',
         payload: result.data.hits,
       });
-    })
-      .catch(() =>
-        dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
-      );
+    } catch {
+        dispatchStories({ type: 'STORIES_FETCH_FAILER' });
+    }
+
   }, [url]); // (E)
 
   React.useEffect(() => {
