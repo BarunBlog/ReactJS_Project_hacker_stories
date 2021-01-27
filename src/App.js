@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 //import logo from './logo.svg';
 import './App.css';
 
@@ -61,29 +62,46 @@ const App = () => {
 
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
 
+  const [url, setUrl] = React.useState(
+    `${API_ENDPOINT}${searchTerm}`
+  );
+
   //const [stories, setStories] = React.useState([]);
   const [stories, dispatchStories] = React.useReducer(
     storiesReducer,
     { data: [], isLoading: false, isError:false }
   );
 
-  React.useEffect(() => {
-    if(!searchTerm) return;
+  /*
+  will move all the data fetching logic into a standalone function outside the side-effect (A); 
+  wrap it into a useCallback hook (B); and then invoke it in the useEffect hook (C)
+  */
+  // (A)
+  const handleFetchStories = React.useCallback(() => {
 
     dispatchStories({ type: 'STORIES_FETCH_INIT'});
 
-    fetch(`${API_ENDPOINT}${searchTerm}`)
-      .then(response => response.json())
+    axios
+      .get(url)
       .then(result => {
       dispatchStories({
         type: 'STORIES_FETCH_SUCCESS',
-        payload: result.hits,
+        payload: result.data.hits,
       });
     })
       .catch(() =>
         dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
       );
-  }, [searchTerm]);
+  }, [url]); // (E)
+
+  React.useEffect(() => {
+    handleFetchStories(); // (C)
+  }, [handleFetchStories]); // (D)
+    
+  /*
+  This useCallback hook creates a memoized function every time its dependency array (E) changes. 
+  As a result, the useEffect hook runs again (C) because it depends on the new function (D)
+  */
 
 
   const handleRemoveStory = item => {
@@ -94,11 +112,22 @@ const App = () => {
   };
 
 
-  const handleSearch = event => {
+  const handleSearchInput = event => {
     setSearchTerm(event.target.value);
   };
 
-  
+  /*
+  the button handler sets the url derived from the current searchTerm and the static
+  API URL as a new state
+  */
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
+  };
+  /*
+   instead of running the data fetching side-effect on every searchTerm change – which would
+   happen each time the input field’s value changes – the url is used. The url is set explicitly 
+   by the user when the search is confirmed via our new button
+  */
   return (
     <div>
       <h1>My Hacker Stories</h1>
@@ -107,10 +136,18 @@ const App = () => {
         id="search"
         value={searchTerm}
         isFocused
-        onInputChange={handleSearch}
+        onInputChange={handleSearchInput}
       >
         <strong>Search:</strong>
       </InputWithLabel>
+
+      <button
+        type="button"
+        disabled={!searchTerm}
+        onClick={handleSearchSubmit}
+      >
+        Submit
+      </button>
 
 
       <hr/>
