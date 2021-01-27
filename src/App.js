@@ -61,6 +61,10 @@ const App = () => {
 
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
 
+  const [url, setUrl] = React.useState(
+    `${API_ENDPOINT}${searchTerm}`
+  );
+
   //const [stories, setStories] = React.useState([]);
   const [stories, dispatchStories] = React.useReducer(
     storiesReducer,
@@ -73,11 +77,10 @@ const App = () => {
   */
   // (A)
   const handleFetchStories = React.useCallback(() => {
-    if(!searchTerm) return;
 
     dispatchStories({ type: 'STORIES_FETCH_INIT'});
 
-    fetch(`${API_ENDPOINT}${searchTerm}`)
+    fetch(url)
       .then(response => response.json())
       .then(result => {
       dispatchStories({
@@ -88,7 +91,7 @@ const App = () => {
       .catch(() =>
         dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
       );
-  }, [searchTerm]); // (E)
+  }, [url]); // (E)
 
   React.useEffect(() => {
     handleFetchStories(); // (C)
@@ -108,11 +111,22 @@ const App = () => {
   };
 
 
-  const handleSearch = event => {
+  const handleSearchInput = event => {
     setSearchTerm(event.target.value);
   };
 
-  
+  /*
+  the button handler sets the url derived from the current searchTerm and the static
+  API URL as a new state
+  */
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
+  };
+  /*
+   instead of running the data fetching side-effect on every searchTerm change – which would
+   happen each time the input field’s value changes – the url is used. The url is set explicitly 
+   by the user when the search is confirmed via our new button
+  */
   return (
     <div>
       <h1>My Hacker Stories</h1>
@@ -121,10 +135,18 @@ const App = () => {
         id="search"
         value={searchTerm}
         isFocused
-        onInputChange={handleSearch}
+        onInputChange={handleSearchInput}
       >
         <strong>Search:</strong>
       </InputWithLabel>
+
+      <button
+        type="button"
+        disabled={!searchTerm}
+        onClick={handleSearchSubmit}
+      >
+        Submit
+      </button>
 
 
       <hr/>
