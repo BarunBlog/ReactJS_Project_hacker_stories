@@ -77,21 +77,22 @@ const App = () => {
   wrap it into a useCallback hook (B); and then invoke it in the useEffect hook (C)
   */
   // (A)
-  const handleFetchStories = React.useCallback(() => {
-
+  const handleFetchStories = React.useCallback(async () => {
+    // To use async/await, our function requires the async keyword.
     dispatchStories({ type: 'STORIES_FETCH_INIT'});
+    try {
+      const result = await axios.get(url);
+      //Actions after the await keyword are not executed until promise resolves, 
+      //meaning the code will wait
 
-    axios
-      .get(url)
-      .then(result => {
       dispatchStories({
         type: 'STORIES_FETCH_SUCCESS',
         payload: result.data.hits,
       });
-    })
-      .catch(() =>
-        dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
-      );
+    } catch {
+        dispatchStories({ type: 'STORIES_FETCH_FAILER' });
+    }
+
   }, [url]); // (E)
 
   React.useEffect(() => {
@@ -120,8 +121,13 @@ const App = () => {
   the button handler sets the url derived from the current searchTerm and the static
   API URL as a new state
   */
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = event => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
+
+    event.preventDefault();
+    /*since the handler is used for the form event, it executes preventDefault in React’s
+    synthetic event. This prevents the HTML form’s native behavior, which leads to a browser reload.
+    */
   };
   /*
    instead of running the data fetching side-effect on every searchTerm change – which would
@@ -132,23 +138,11 @@ const App = () => {
     <div>
       <h1>My Hacker Stories</h1>
 
-      <InputWithLabel
-        id="search"
-        value={searchTerm}
-        isFocused
-        onInputChange={handleSearchInput}
-      >
-        <strong>Search:</strong>
-      </InputWithLabel>
-
-      <button
-        type="button"
-        disabled={!searchTerm}
-        onClick={handleSearchSubmit}
-      >
-        Submit
-      </button>
-
+      <SearchForm
+        searchTerm={searchTerm}
+        onSearchInput={handleSearchInput}
+        onSearchSubmit={handleSearchSubmit}
+      />
 
       <hr/>
 
@@ -169,6 +163,28 @@ const App = () => {
     </div>
   );
 };
+
+const SearchForm = ({
+  searchTerm,
+  onSearchInput,
+  onSearchSubmit,
+}) => (
+  <form onSubmit={onSearchSubmit}>
+        <InputWithLabel
+          id="search"
+          value={searchTerm}
+          isFocused
+          onInputChange={onSearchInput}
+        >
+          <strong>Search:</strong>
+        </InputWithLabel>
+
+        <button type="submit" disabled={!searchTerm}>
+          Submit
+        </button>
+      </form>
+
+);
 
 
 /* Everything that’s passed between a component’s elements can be accessed
